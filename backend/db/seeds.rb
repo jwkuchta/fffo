@@ -85,7 +85,7 @@ require 'byebug'
   },
 ]
 
-def scraper
+def restaurant_scraper
   url = "https://fastfoodnutrition.org"
 
   @restaurants.each do |restaurant|
@@ -94,18 +94,27 @@ def scraper
 
     unparsed_foods = parsed.css('div.filter_target')
     unparsed_foods.each do |unparsed_food|
-    parsed_food = unparsed_food.text
-    food = {
-      name: parsed_food.split(' Nutrition Facts').first,
-      image: nil,
-      # TODO: Remove foods with less than 350 calories
-      # TODO: 960-1180 calories (accept average, round to 0)
-      calories: parsed_food.split(' Nutrition Facts').last.split(' calories').last.to_i
-    }
-    restaurant[:foods] << food
+      parsed_food = unparsed_food.text
+
+      if parsed_food.split(' Nutrition Facts').last.include? "-"
+        # finds the average calories if given a range (i.e. 500-750 calories)
+        calorie_range = parsed_food.split(' Nutrition Facts').last.split(' ').first.split('-').map {|num| num.to_i}
+        final_calories = calorie_range.sum/2
+      else
+        final_calories = parsed_food.split(' Nutrition Facts').last.split(' calories').last.to_i
+      end
+
+      if final_calories > 350
+        # dismisses foods with calories less than 350
+        food = {
+          name: parsed_food.split(' Nutrition Facts').first,
+          image: nil,
+          calories: final_calories
+        }
+        restaurant[:foods] << food
+      end
     end
   end
-
 end
 
-scraper
+restaurant_scraper
