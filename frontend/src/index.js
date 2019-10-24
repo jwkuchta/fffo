@@ -83,6 +83,17 @@ function gameFetchCreate(userID) {
     .then(response => response.json())
 }
 
+function gameScoreUpdateFetch(USER) {
+    fetch(GAME_URL, {
+        method: "PATCH",
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({user_id: USER})
+    })
+}
+
 ////////// GAME //////////
 
 function renderPlayGame(data) {
@@ -210,13 +221,14 @@ function randomizer(array) {
             gameItems.splice(index2, 1)
         }
         clearNode(pageBody)
-        createDisplayCards(item1, item2)
+        createDisplayCards(item1, item2, gameItems)
     } else {
-        fetchCards()
+        allItems = CARD_DATA
+        randomizer(allItems)
     }
 }
 
-function createDisplayCards(data1, data2) {
+function createDisplayCards(data1, data2, array) {
     ///////// First CARD /////////
 
     //creates div for both cards
@@ -336,6 +348,33 @@ function createDisplayCards(data1, data2) {
     card2span.id = "card2-bottom-bar"
     card2span.className = "right floated"
     card2extra.appendChild(card2span)
+
+    //adds event listeners on winning/losing cards depending on calorie #'s
+    if (data1["calories"] > data2["calories"]) {
+        //data1 = card1 (winning card)
+        card1.addEventListener('click', () => {
+            gameScoreUpdateFetch()
+            randomizer(array)
+        })
+        card2.addEventListener('click', () => {
+            clearNode(pageBody)
+            gameOver()
+        })
+    } else {
+        //data2 = card2 (winning card)
+        card2.addEventListener('click', () => {
+            gameScoreUpdateFetch()
+            randomizer(array)
+        })
+        card1.addEventListener('click', () => {
+            clearNode(pageBody)
+            gameOver()
+        })
+    }
+}
+
+function gameOver() {
+    console.log("you loose!")
 }
 
 

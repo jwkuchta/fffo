@@ -14,6 +14,11 @@ class GamesController < ApplicationController
         end
     end
 
+    def update
+        byebug
+        User.find_by(id: user_params[:id])
+    end
+
     private
 
     def game_params
