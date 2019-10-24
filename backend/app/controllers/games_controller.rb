@@ -15,8 +15,13 @@ class GamesController < ApplicationController
     end
 
     def update
-        byebug
-        User.find_by(id: user_params[:id])
+        this_game = Game.find_by(id: params[:id])
+        this_game.score += 1
+        if this_game.save
+            render json: this_game, status: 200
+        else
+            render json: this_game.errors, status: :unprocessble_entity
+        end
     end
 
     private
