@@ -1,3 +1,6 @@
+Restaurant.destroy_all
+Food.destroy_all
+
 require 'nokogiri'
 require 'httparty'
 require 'byebug'
@@ -7,7 +10,7 @@ require 'byebug'
     name: "Arby's",
     route: "/arbys",
     foods: []
-  },
+   },
   {
     name: "Burger King",
     route: "/burger-king",
@@ -64,11 +67,6 @@ require 'byebug'
     foods: []
   },
   {
-    name: "Subway",
-    route: "/subway",
-    foods: []
-  },
-  {
     name: "Taco Bell",
     route: "/taco-bell",
     foods: []
@@ -85,10 +83,14 @@ require 'byebug'
   },
 ]
 
+
+
 def restaurant_scraper
   url = "https://fastfoodnutrition.org"
 
   @restaurants.each do |restaurant|
+    thisRestaurant = Restaurant.create(name: restaurant[:name])
+
     unparsed = HTTParty.get(url + restaurant[:route])
     parsed = Nokogiri::HTML(unparsed)
 
@@ -112,6 +114,7 @@ def restaurant_scraper
           calories: final_calories
         }
         restaurant[:foods] << food
+        Food.create(name: food[:name], image: food[:image], calories: food[:calories], restaurant_id: thisRestaurant.id)
       end
     end
   end
