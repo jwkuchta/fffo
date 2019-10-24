@@ -5,6 +5,8 @@ USER_URL = BASEURL + "/users"
 
 USER = {}
 CARD_DATA = {}
+GAME = {}
+LEADERBOARD = {}
 
 const pageBody = document.querySelector('#body-segment')
 const gameTab = document.querySelector('#game-tab')
@@ -68,7 +70,7 @@ function fetchLeaderboard() {
         body: JSON.stringify()
     })
     .then(response => response.json())
-    .then(data => loadLeaderboard(data))
+    .then(data => LEADERBOARD = data)
 }
 
 function gameFetchCreate(userID) {
@@ -78,19 +80,29 @@ function gameFetchCreate(userID) {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         },
-        body: JSON.stringify({score: 0, user_id: userID})
+        body: JSON.stringify({ score: 0, user_id: userID })
     })
     .then(response => response.json())
+    .then(data => {
+        GAME = data
+        displayScore()
+        document.querySelector('#current-game-score').innerText = data['score']
+    })
 }
 
-function gameScoreUpdateFetch(USER) {
-    fetch(GAME_URL, {
+function gameScoreUpdateFetch() {
+    fetch(GAME_URL + "/" + GAME['id'], {
         method: "PATCH",
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         },
-        body: JSON.stringify({user_id: USER})
+        body: JSON.stringify()
+    })
+    .then(response => response.json())
+    .then(data => {
+        GAME = data
+        document.querySelector('#current-game-score').innerText = data['score']
     })
 }
 
@@ -251,9 +263,9 @@ function createDisplayCards(data1, data2, array) {
 
     //creates first card's photo img and appends to card1photo
     const card1img = document.createElement('img')
-    card1img.src = data1.img_url
     card1img.alt = data1.name
     card1img.src = data1.image
+    card1img.style = "height: 300px;"
     card1photo.appendChild(card1img)
 
     //creates first card's content div and appends to card1 div
@@ -308,9 +320,9 @@ function createDisplayCards(data1, data2, array) {
 
     //creates second card's photo img and appends to card2photo
     const card2img = document.createElement('img')
-    card2img.src = data2.img_url
     card2img.alt = data2.name
     card2img.src = data2.image
+    card2img.style = "height: 300px;"
     card2photo.appendChild(card2img)
 
     //creates second card's content div and appends to card2 div
@@ -355,6 +367,7 @@ function createDisplayCards(data1, data2, array) {
         card1.addEventListener('click', () => {
             gameScoreUpdateFetch()
             randomizer(array)
+            displayScore()
         })
         card2.addEventListener('click', () => {
             clearNode(pageBody)
@@ -365,12 +378,65 @@ function createDisplayCards(data1, data2, array) {
         card2.addEventListener('click', () => {
             gameScoreUpdateFetch()
             randomizer(array)
+            displayScore()
         })
         card1.addEventListener('click', () => {
             clearNode(pageBody)
             gameOver()
         })
     }
+}
+
+function displayScore() {
+    //creates div to contain all labels
+    const allScores = document.createElement('div')
+    allScores.style = "margin-top: 25px;"
+    pageBody.appendChild(allScores)
+
+    //creates personal highest record score div and appends to pagebody
+    const userHighScoreDiv = document.createElement('div')
+    userHighScoreDiv.className = "ui huge label"
+    userHighScoreDiv.innerText = "Personal High Score: "
+    allScores.appendChild(userHighScoreDiv)
+
+    //calculates personal highest score
+    users_games = LEADERBOARD.filter(game => game.user_id === USER['id'])
+    user_highest_score = users_games.sort((a, b) => b['score'] - a['score'])
+
+    //adds personal high score to psersonalHighScoreDiv
+    const userHighScoreDetail = document.createElement('div')
+    userHighScoreDetail.className = "detail"
+    userHighScoreDetail.id = "user-high-score"
+    userHighScoreDetail.innerText = user_highest_score[0]['score']
+    userHighScoreDiv.appendChild(userHighScoreDetail)
+
+    //creates highest record score div and appends to pagebody
+    const highScoreDiv = document.createElement('div')
+    highScoreDiv.className = "ui huge label"
+    highScoreDiv.innerText = "Record High Score: "
+    allScores.appendChild(highScoreDiv)
+
+    //calculates leaderboard highest score
+    highest_score = LEADERBOARD.sort((a, b) => b['score'] - a['score'])
+
+    //adds high score to highScoreDiv
+    const highScoreDetail = document.createElement('div')
+    highScoreDetail.className = "detail"
+    highScoreDetail.id = "record-high-score"
+    highScoreDetail.innerText = highest_score[0]['score']
+    highScoreDiv.appendChild(highScoreDetail)
+
+    //creates score div and appends to pagebody
+    const scoreDiv = document.createElement('div')
+    scoreDiv.className = "ui huge label"
+    scoreDiv.innerText = "Score: "
+    allScores.appendChild(scoreDiv)
+
+    //adds current game score to scoreDiv
+    const scoreDetail = document.createElement('div')
+    scoreDetail.className = "detail"
+    scoreDetail.id = "current-game-score"
+    scoreDiv.appendChild(scoreDetail)
 }
 
 function gameOver() {
@@ -380,13 +446,79 @@ function gameOver() {
 
 /////////// LEADERBOARD //////////
 
-function loadLeaderboard(data) {
-    console.log(data)
+function renderLeaderboard() {
+    clearNode(pageBody)
+
+    const leaderboardTable = document.createElement('table')
+    leaderboardTable.className = "ui very basic collapsing celled table"
+
 }
 
-function renderLeaderboard() {
-    console.log("leaderboard content loaded")
-}
+/* <table class="ui very basic collapsing celled table">
+  <thead>
+    <tr><th>Employee</th>
+    <th>Correct Guesses</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td>
+        <h4 class="ui image header">
+          <img src="/images/avatar2/small/lena.png" class="ui mini rounded image">
+          <div class="content">
+            Lena
+            <div class="sub header">Human Resources
+          </div>
+        </div>
+      </h4></td>
+      <td>
+        22
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <h4 class="ui image header">
+          <img src="/images/avatar2/small/matthew.png" class="ui mini rounded image">
+          <div class="content">
+            Matthew
+            <div class="sub header">Fabric Design
+          </div>
+        </div>
+      </h4></td>
+      <td>
+        15
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <h4 class="ui image header">
+          <img src="/images/avatar2/small/lindsay.png" class="ui mini rounded image">
+          <div class="content">
+            Lindsay
+            <div class="sub header">Entertainment
+          </div>
+        </div>
+      </h4></td>
+      <td>
+        12
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <h4 class="ui image header">
+          <img src="/images/avatar2/small/mark.png" class="ui mini rounded image">
+          <div class="content">
+            Mark
+            <div class="sub header">Executive
+          </div>
+        </div>
+      </h4></td>
+      <td>
+        11
+      </td>
+    </tr>
+  </tbody>
+</table> */
+
 
 
 ////////// ABOUT //////////////
