@@ -13,12 +13,12 @@ const gameTab = document.querySelector('#game-tab')
 const leaderboardTab = document.querySelector('#leaderboard-tab')
 const aboutTab = document.querySelector('#about-tab')
 
-document.addEventListener('DOMContentLoaded', () => { 
+document.addEventListener('DOMContentLoaded', () => {
     fetchCards()
     fetchLeaderboard()
 
-    //switches to game tab and updates active status  
-    gameTab.addEventListener('click', () => { 
+    //switches to game tab and updates active status
+    gameTab.addEventListener('click', () => {
         clearNode(pageBody)
         gameTab.className = "active item"
         leaderboardTab.className = "item"
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderPlayGame(CARD_DATA)
     })
     //switches to leaderboard tab and updates active status
-    leaderboardTab.addEventListener('click', () => { 
+    leaderboardTab.addEventListener('click', () => {
         clearNode(pageBody)
         gameTab.className = "item"
         leaderboardTab.className = "item active"
@@ -34,12 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
         renderLeaderboard()
     })
     //switches to about tab and updates active status
-    aboutTab.addEventListener('click', () => { 
+    aboutTab.addEventListener('click', () => {
         clearNode(pageBody)
         gameTab.className = "item"
         leaderboardTab.className = "item"
-        aboutTab.className = "item active"  
-        renderAboutInfo() 
+        aboutTab.className = "item active"
+        renderAboutInfo()
     })
 })
 
@@ -47,28 +47,28 @@ document.addEventListener('DOMContentLoaded', () => {
 //////// FETCHES /////////////
 
 function fetchCards() {
-    fetch(FOOD_URL, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify()
-    })
+  fetch(FOOD_URL, {
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json"
+    },
+    body: JSON.stringify()
+  })
     .then(response => response.json())
     .then(data => {
-        CARD_DATA = data
-        renderPlayGame(CARD_DATA)
-    })
+      CARD_DATA = data;
+      renderPlayGame(CARD_DATA);
+    });
 }
 
 function fetchLeaderboard() {
-    fetch(GAME_URL, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify()
-    })
+  fetch(GAME_URL, {
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json"
+    },
+    body: JSON.stringify()
+  })
     .then(response => response.json())
     .then(data => LEADERBOARD = data)
 }
@@ -109,135 +109,136 @@ function gameScoreUpdateFetch() {
 ////////// GAME //////////
 
 function renderPlayGame(data) {
-    const playButton = document.createElement('button')
-    playButton.className = "massive ui button"
-    playButton.style = "width: 250px; margin: 100px;"
-    playButton.innerText = "Play Now!"
-    pageBody.appendChild(playButton)
+  const playButton = document.createElement("button");
+  playButton.className = "massive ui button";
+  playButton.style = "width: 250px; margin: 100px;";
+  playButton.innerText = "Play Now!";
+  pageBody.appendChild(playButton);
 
-    playButton.addEventListener('click', () => { 
-        clearNode(pageBody)
-        renderUserInfo(data) 
-    })
+  playButton.addEventListener("click", () => {
+    clearNode(pageBody);
+    renderUserInfo(data);
+  });
 }
 
 function renderUserInfo(data) {
-    //creates and appends form div to body
-    const formDiv = document.createElement('div')
-    formDiv.style="width: 400px; margin: auto; padding: 50px;"
-    pageBody.appendChild(formDiv)
+  //creates and appends form div to body
+  const formDiv = document.createElement("div");
+  formDiv.style = "width: 400px; margin: auto; padding: 50px;";
+  pageBody.appendChild(formDiv);
 
-    //creates and appends header and description to body
-    const h2 = document.createElement('h2')
-    h2.className = "ui header"
-    h2.innerText = "Enter Username Below"
-    formDiv.appendChild(h2)
+  //creates and appends header and description to body
+  const h2 = document.createElement("h2");
+  h2.className = "ui header";
+  h2.innerText = "Enter Username Below";
+  formDiv.appendChild(h2);
 
-    const h4 = document.createElement('h4')
-    h4.className = "ui header"
-    h4.innerText = "If you have previously logged in, enter the username from before!"
-    formDiv.appendChild(h4)
+  const h4 = document.createElement("h4");
+  h4.className = "ui header";
+  h4.innerText =
+    "If you have previously logged in, enter the username from before!";
+  formDiv.appendChild(h4);
 
-    formDiv.appendChild(document.createElement('br'))
+  formDiv.appendChild(document.createElement("br"));
 
-    //creates form and appends to div
-    const form = document.createElement('form')
-    form.className = "ui form"
-    formDiv.appendChild(form)
+  //creates form and appends to div
+  const form = document.createElement("form");
+  form.className = "ui form";
+  formDiv.appendChild(form);
 
-    //creates input div and appends to form
-    const inputDiv1 = document.createElement('div')
-    inputDiv1.className = "field"
-    form.appendChild(inputDiv1)
+  //creates input div and appends to form
+  const inputDiv1 = document.createElement("div");
+  inputDiv1.className = "field";
+  form.appendChild(inputDiv1);
 
-    //creates username text and appends to form
-    const usernameDescr = document.createElement('label')
-    usernameDescr.innerText = "Username: "
-    usernameDescr.style = "text-align: left;"
-    inputDiv1.appendChild(usernameDescr)
+  //creates username text and appends to form
+  const usernameDescr = document.createElement("label");
+  usernameDescr.innerText = "Username: ";
+  usernameDescr.style = "text-align: left;";
+  inputDiv1.appendChild(usernameDescr);
 
-    //creates username box and appends to form
-    const usernameBox = document.createElement('input')
-    usernameBox.type = "text"
-    usernameBox.id = "user-input"
-    usernameBox.name = "username"
-    usernameBox.placeholder = "Username"
-    inputDiv1.appendChild(usernameBox)
+  //creates username box and appends to form
+  const usernameBox = document.createElement("input");
+  usernameBox.type = "text";
+  usernameBox.id = "user-input";
+  usernameBox.name = "username";
+  usernameBox.placeholder = "Username";
+  inputDiv1.appendChild(usernameBox);
 
-    formDiv.appendChild(document.createElement('br'))
+  formDiv.appendChild(document.createElement("br"));
 
-    //creates login button
-    const loginbutton = document.createElement('input')
-    loginbutton.type = "submit"
-    loginbutton.value = "Log In"
-    loginbutton.className = "ui button"
-    form.appendChild(loginbutton)  
+  //creates login button
+  const loginbutton = document.createElement("input");
+  loginbutton.type = "submit";
+  loginbutton.value = "Log In";
+  loginbutton.className = "ui button";
+  form.appendChild(loginbutton);
 
-    form.addEventListener('submit', (e) => {
-        e.preventDefault()
-        const userInput = document.querySelector('#user-input').value
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const userInput = document.querySelector("#user-input").value;
 
-        //check database for user, or create a new one
-        fetch(USER_URL, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({username: userInput})
-        })
-        .then(response => response.json())
-        .then(currentUser => sortAllFood(data, currentUser))
+    //check database for user, or create a new one
+    fetch(USER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: JSON.stringify({ username: userInput })
     })
+      .then(response => response.json())
+      .then(currentUser => sortAllFood(data, currentUser));
+  });
 }
 
 function sortAllFood(data, userObject) {
-    USER = userObject
-    gameFetchCreate(userObject)
-    //takes all items from database and puts them into the allItems array before calling on randomizer
-    let allItems = []
-    for (let i = 0; i < data.length; i++) {
-        let restaurant = data[i].name
-        let foods = data[i].foods
-        for (let x = 0; x < foods.length; x++) {
-            item = {
-                name: foods[x].name,
-                image: foods[x].image,
-                calories: foods[x].calories,
-                restaurant: restaurant
-            }
-            allItems.push(item)
-        }
+  USER = userObject;
+  gameFetchCreate(userObject);
+  //takes all items from database and puts them into the allItems array before calling on randomizer
+  let allItems = [];
+  for (let i = 0; i < data.length; i++) {
+    let restaurant = data[i].name;
+    let foods = data[i].foods;
+    for (let x = 0; x < foods.length; x++) {
+      item = {
+        name: foods[x].name,
+        image: foods[x].image,
+        calories: foods[x].calories,
+        restaurant: restaurant
+      };
+      allItems.push(item);
     }
-    randomizer(allItems)
+  }
+  randomizer(allItems);
 }
 
 function randomizer(array) {
-    //checks to see if array is empty
-    //this is for crazy people who get all 500+ pairs correct
-    if (array !== []) {
-        const allItems = array
-        const gameItems = [...allItems]
+  //checks to see if array is empty
+  //this is for crazy people who get all 500+ pairs correct
+  if (array !== []) {
+    const allItems = array;
+    const gameItems = [...allItems];
 
-        //grabs first item and removes it from gameItems array
-        let item1 = gameItems[Math.floor(Math.random() * gameItems.length)]
-        let index1 = gameItems.indexOf(item1)
-        if (index1 > -1) {
-            gameItems.splice(index1, 1)
-        }
-
-        //grabs second item and removes it from gameItems array
-        let item2 = gameItems[Math.floor(Math.random() * gameItems.length)]
-        let index2 = gameItems.indexOf(item2)
-        if (index2 > -1) {
-            gameItems.splice(index2, 1)
-        }
-        clearNode(pageBody)
-        createDisplayCards(item1, item2, gameItems)
-    } else {
-        allItems = CARD_DATA
-        randomizer(allItems)
+    //grabs first item and removes it from gameItems array
+    let item1 = gameItems[Math.floor(Math.random() * gameItems.length)];
+    let index1 = gameItems.indexOf(item1);
+    if (index1 > -1) {
+      gameItems.splice(index1, 1);
     }
+
+    //grabs second item and removes it from gameItems array
+    let item2 = gameItems[Math.floor(Math.random() * gameItems.length)];
+    let index2 = gameItems.indexOf(item2);
+    if (index2 > -1) {
+      gameItems.splice(index2, 1);
+    }
+    clearNode(pageBody);
+    createDisplayCards(item1, item2, gameItems);
+  } else {
+    allItems = CARD_DATA;
+    randomizer(allItems);
+  }
 }
 
 function createDisplayCards(data1, data2, array) {
@@ -440,98 +441,29 @@ function displayScore() {
 }
 
 function gameOver() {
-    console.log("you loose!")
+  console.log("you loose!");
 }
-
 
 /////////// LEADERBOARD //////////
 
-function renderLeaderboard() {
-    clearNode(pageBody)
-
-    const leaderboardTable = document.createElement('table')
-    leaderboardTable.className = "ui very basic collapsing celled table"
-
+function loadLeaderboard(data) {
+  console.log(data);
 }
 
-/* <table class="ui very basic collapsing celled table">
-  <thead>
-    <tr><th>Employee</th>
-    <th>Correct Guesses</th>
-  </tr></thead>
-  <tbody>
-    <tr>
-      <td>
-        <h4 class="ui image header">
-          <img src="/images/avatar2/small/lena.png" class="ui mini rounded image">
-          <div class="content">
-            Lena
-            <div class="sub header">Human Resources
-          </div>
-        </div>
-      </h4></td>
-      <td>
-        22
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <h4 class="ui image header">
-          <img src="/images/avatar2/small/matthew.png" class="ui mini rounded image">
-          <div class="content">
-            Matthew
-            <div class="sub header">Fabric Design
-          </div>
-        </div>
-      </h4></td>
-      <td>
-        15
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <h4 class="ui image header">
-          <img src="/images/avatar2/small/lindsay.png" class="ui mini rounded image">
-          <div class="content">
-            Lindsay
-            <div class="sub header">Entertainment
-          </div>
-        </div>
-      </h4></td>
-      <td>
-        12
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <h4 class="ui image header">
-          <img src="/images/avatar2/small/mark.png" class="ui mini rounded image">
-          <div class="content">
-            Mark
-            <div class="sub header">Executive
-          </div>
-        </div>
-      </h4></td>
-      <td>
-        11
-      </td>
-    </tr>
-  </tbody>
-</table> */
-
-
+function renderLeaderboard() {
+  console.log("leaderboard content loaded");
+}
 
 ////////// ABOUT //////////////
 
 function renderAboutInfo() {
-    console.log("about info content loaded")
+  console.log("about info content loaded");
 }
-
 
 ////////// CLEAR NODE //////////
 
 function clearNode(node) {
-    while(node.firstChild) {
-        node.removeChild(node.firstChild)
-    }
+  while (node.firstChild) {
+    node.removeChild(node.firstChild);
+  }
 }
