@@ -57,7 +57,7 @@ function fetchCards() {
     .then(response => response.json())
     .then(data => {
       CARD_DATA = data;
-      renderPlayGame(CARD_DATA);
+      renderPlayGame();
     });
 }
 
@@ -108,7 +108,7 @@ function gameScoreUpdateFetch() {
 
 ////////// GAME //////////
 
-function renderPlayGame(data) {
+function renderPlayGame() {
   const playButton = document.createElement("button");
   playButton.className = "massive ui button";
   playButton.style = "width: 250px; margin: 100px;";
@@ -117,11 +117,11 @@ function renderPlayGame(data) {
 
   playButton.addEventListener("click", () => {
     clearNode(pageBody);
-    renderUserInfo(data);
+    renderUserInfo();
   });
 }
 
-function renderUserInfo(data) {
+function renderUserInfo() {
   //creates and appends form div to body
   const formDiv = document.createElement("div");
   formDiv.style = "width: 400px; margin: auto; padding: 50px;";
@@ -188,7 +188,7 @@ function renderUserInfo(data) {
       body: JSON.stringify({ username: userInput })
     })
       .then(response => response.json())
-      .then(currentUser => sortAllFood(data, currentUser));
+      .then(currentUser => sortAllFood(CARD_DATA, currentUser));
   });
 }
 
@@ -262,7 +262,7 @@ function createDisplayCards(data1, data2, array) {
     card1photo.className = "image"
     card1Div.appendChild(card1photo)
 
-    //creates first card's photo img and appends to card1photo
+    //creates first card's photo img and appends to visible content div
     const card1img = document.createElement('img')
     card1img.alt = data1.name
     card1img.src = data1.image
@@ -302,8 +302,15 @@ function createDisplayCards(data1, data2, array) {
     //creates first card's span and appends to card1extra div
     const card1span = document.createElement('span')
     card1span.id = "card1-bottom-bar"
-    card1span.className = "right floated"
+    card1span.className = "center floated"
     card1extra.appendChild(card1span)
+
+    //creates first card's calorie h3
+    const card1calorieReveal = document.createElement('h3')
+    card1calorieReveal.className = "ui header"
+    card1calorieReveal.id = "card1calories"
+    card1calorieReveal.innerText = "-"
+    card1span.appendChild(card1calorieReveal)
 
     ///////// SECOND CARD /////////
 
@@ -318,7 +325,7 @@ function createDisplayCards(data1, data2, array) {
     card2photo.id = "card2-photo"
     card2photo.className = "image"
     card2Div.appendChild(card2photo)
-
+    
     //creates second card's photo img and appends to card2photo
     const card2img = document.createElement('img')
     card2img.alt = data2.name
@@ -359,31 +366,62 @@ function createDisplayCards(data1, data2, array) {
     //creates second card's span and appends to card1extra div
     const card2span = document.createElement('span')
     card2span.id = "card2-bottom-bar"
-    card2span.className = "right floated"
+    card2span.className = "center floated"
     card2extra.appendChild(card2span)
+
+    //creates second card's calorie h3
+    const card2calorieReveal = document.createElement('h3')
+    card2calorieReveal.className = "ui header"
+    card2calorieReveal.id = "card2calories"
+    card2calorieReveal.innerText = "-"
+    card2span.appendChild(card2calorieReveal)
 
     //adds event listeners on winning/losing cards depending on calorie #'s
     if (data1["calories"] > data2["calories"]) {
         //data1 = card1 (winning card)
         card1.addEventListener('click', () => {
-            gameScoreUpdateFetch()
-            randomizer(array)
-            displayScore()
+            document.querySelector('#card1calories').innerText = data1['calories']
+            document.querySelector('#card1calories').style = "color: green;"
+            document.querySelector('#card2calories').innerText = data2['calories']
+            setTimeout( () => {
+                gameScoreUpdateFetch()
+                fetchLeaderboard()
+                randomizer(array)
+                displayScore()
+            }, 2000)
         })
         card2.addEventListener('click', () => {
-            clearNode(pageBody)
-            gameOver()
+            document.querySelector('#card1calories').innerText = data1['calories']
+            document.querySelector('#card2calories').innerText = data2['calories']
+            document.querySelector('#card2calories').style = "color: red;"
+            setTimeout( () => {
+                clearNode(pageBody)
+                fetchLeaderboard()
+                gameOver()
+            }, 2000)
         })
     } else {
         //data2 = card2 (winning card)
         card2.addEventListener('click', () => {
-            gameScoreUpdateFetch()
-            randomizer(array)
-            displayScore()
+            document.querySelector('#card1calories').innerText = data1['calories']
+            document.querySelector('#card2calories').innerText = data2['calories']
+            document.querySelector('#card2calories').style = "color: green;"
+            setTimeout( () => {
+                gameScoreUpdateFetch()
+                fetchLeaderboard()
+                randomizer(array)
+                displayScore()
+            }, 2000)
         })
         card1.addEventListener('click', () => {
-            clearNode(pageBody)
-            gameOver()
+            document.querySelector('#card1calories').innerText = data1['calories']
+            document.querySelector('#card1calories').style = "color: red;"
+            document.querySelector('#card2calories').innerText = data2['calories']
+            setTimeout( () => {
+                clearNode(pageBody)
+                fetchLeaderboard()
+                gameOver()
+            }, 2000)
         })
     }
 }
@@ -441,6 +479,7 @@ function displayScore() {
 }
 
 function gameOver() {
+
   console.log("you loose!");
 }
 
