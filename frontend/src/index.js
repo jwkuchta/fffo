@@ -109,16 +109,28 @@ function gameScoreUpdateFetch() {
 ////////// GAME //////////
 
 function renderPlayGame() {
-  const playButton = document.createElement("button");
-  playButton.className = "massive ui button";
-  playButton.style = "width: 250px; margin: 100px;";
-  playButton.innerText = "Play Now!";
-  pageBody.appendChild(playButton);
+    const rulesDiv = document.createElement("div")
+    rulesDiv.className = "ui"
+    pageBody.appendChild(rulesDiv);
+    const rulesA = document.createElement("p")
+    rulesA.innerHTML = "The object of this game is to guess which of the two food items has the most calories. <br> After every correct answer, two more food items appear.<br>This will go on until you select the incorrect answer in which the game is over."
+    rulesDiv.appendChild(rulesA)
+
+  const playButton = document.createElement("button")
+  playButton.className = "massive ui button"
+  playButton.style = "width: 250px; margin: 100px; background-color: #c93939; color: #f0f0f0;"
+  playButton.innerText = "Play Now"
+  pageBody.appendChild(playButton)
+
+  const wellWishes = document.createElement('h3')
+  wellWishes.className = "ui header"
+  wellWishes.innerText = "Good Luck!"
+  pageBody.appendChild(wellWishes)
 
   playButton.addEventListener("click", () => {
-    clearNode(pageBody);
-    renderUserInfo();
-  });
+    clearNode(pageBody)
+    renderUserInfo()
+  })
 }
 
 function renderUserInfo() {
@@ -400,7 +412,7 @@ function createDisplayCards(data1, data2, array) {
                 gameOver()
             }, 2000)
         })
-    } else {
+    } else if (data1["calories"] < data2['calories']) {
         //data2 = card2 (winning card)
         card2.addEventListener('click', () => {
             document.querySelector('#card1calories').innerText = data1['calories']
@@ -421,6 +433,32 @@ function createDisplayCards(data1, data2, array) {
                 clearNode(pageBody)
                 fetchLeaderboard()
                 gameOver()
+            }, 2000)
+        })
+    } else {
+         //both cards win
+         card2.addEventListener('click', () => {
+            document.querySelector('#card1calories').innerText = data1['calories']
+            document.querySelector('#card2calories').innerText = data2['calories']
+            document.querySelector('#card2calories').style = "color: green;"
+            document.querySelector('#card1calories').style = "color: green;"
+            setTimeout( () => {
+                gameScoreUpdateFetch()
+                fetchLeaderboard()
+                randomizer(array)
+                displayScore()
+            }, 2000)
+        })
+        card1.addEventListener('click', () => {
+            document.querySelector('#card1calories').innerText = data1['calories']
+            document.querySelector('#card2calories').innerText = data2['calories']
+            document.querySelector('#card2calories').style = "color: green;"
+            document.querySelector('#card1calories').style = "color: green;"
+            setTimeout( () => {
+                gameScoreUpdateFetch()
+                fetchLeaderboard()
+                randomizer(array)
+                displayScore()
             }, 2000)
         })
     }
@@ -479,24 +517,207 @@ function displayScore() {
 }
 
 function gameOver() {
+    //adds loser text
+    const loser = document.createElement("h1")
+    loser.class = "ui header"
+    loser.innerText = "GAME OVER"
+    pageBody.appendChild(loser)
 
-  console.log("you loose!");
+    //creates loser gif
+    const loseGif = document.createElement("img")
+    loseGif.src = "http://giphygifs.s3.amazonaws.com/media/DXFzuOpPXvUiI/giphy.gif"
+    pageBody.appendChild(loseGif)
+
+    //break
+    pageBody.appendChild(document.createElement("div"))
+
+    //play again button
+    const playAgain = document.createElement("button")
+    playAgain.className = "massive ui button"
+    playAgain.style = "width: 250px; margin: 100px;"
+    playAgain.innerText = "Play Again?"
+    pageBody.appendChild(playAgain)
+
+    playAgain.addEventListener("click", () => {
+        clearNode(pageBody);
+        sortAllFood(CARD_DATA, USER);
+    });
 }
 
 /////////// LEADERBOARD //////////
 
-function loadLeaderboard(data) {
-  console.log(data);
-}
-
 function renderLeaderboard() {
-  console.log("leaderboard content loaded");
+    //creates columns
+
+
+    //creates main leaderboard div
+    const leaderDiv1 = document.createElement('div')
+    leaderDiv1.className = "ui relaxed divided list"
+    leaderDiv1.style = "text-align: left; width: 40%; margin: auto; float: left; margin-left: 15px;"
+    pageBody.appendChild(leaderDiv1)
+
+    //creates left leaderboard div
+    const leaderDiv2 = document.createElement('div')
+    leaderDiv2.className = "ui relaxed divided list"
+    leaderDiv2.style = "text-align: left; width: 40%; margin: auto; float: right; margin-right: 15px;"
+    pageBody.appendChild(leaderDiv2)
+
+    //sorts out the top ten
+    topTen = LEADERBOARD.sort((a, b) => b['score'] - a['score']).slice(0, 10)
+    firstFive = topTen.slice(0, 5)
+    lastFive = topTen.slice(5, 10)
+
+    for (i = 0; i < firstFive.length; i++) {
+        //creates individual score div
+        const item1 = document.createElement('div')
+        item1.className = "item"
+        leaderDiv1.appendChild(item1)
+
+        //creates rank
+        const rank1 = document.createElement('h2')
+        rank1.innerText = (i + 1)
+        rank1.style = "float: left; margin-right: 50px;"
+        item1.appendChild(rank1)
+
+        //user info div
+        const content1 = document.createElement('div')
+        content1.className = "content"
+        item1.appendChild(content1)
+
+        //username
+        const rank1user = document.createElement('p')
+        rank1user.className = "header"
+        rank1user.innerText = firstFive[i]['user']['username']
+        content1.appendChild(rank1user)
+
+        //score
+        const rank1score = document.createElement('div')
+        rank1score.className = "description"
+        rank1score.innerText = firstFive[i]['score'] + " in a row!"
+        content1.appendChild(rank1score)
+    }
+
+    for (i = 0; i < lastFive.length; i++) {
+        //creates individual score div
+        const item2 = document.createElement('div')
+        item2.className = "item"
+        leaderDiv2.appendChild(item2)
+
+        //creates rank
+        const rank2 = document.createElement('h2')
+        rank2.innerText = (i + 6)
+        rank2.style = "float: left; margin-right: 50px;"
+        item2.appendChild(rank2)
+
+        //user info div
+        const content2 = document.createElement('div')
+        content2.className = "content"
+        item2.appendChild(content2)
+
+        //username
+        const rank2user = document.createElement('p')
+        rank2user.className = "header"
+        rank2user.innerText = lastFive[i]['user']['username']
+        content2.appendChild(rank2user)
+
+        //score
+        const rank2score = document.createElement('div')
+        rank2score.className = "description"
+        rank2score.innerText = lastFive[i]['score'] + " in a row!"
+        content2.appendChild(rank2score)
+    }
 }
 
 ////////// ABOUT //////////////
 
 function renderAboutInfo() {
-  console.log("about info content loaded");
+    //creates div for about page
+    const devDiv = document.createElement('div')
+    devDiv.className = "ui segment"
+    pageBody.appendChild(devDiv)
+
+    //creates columns for devs
+    const devColumnGrid = document.createElement('div')
+    devColumnGrid.className = "ui two column very relaxed grid"
+    devDiv.appendChild(devColumnGrid)
+
+    //creates column 1
+    const devColumn1 = document.createElement('div')
+    devColumn1.className = "column"
+    devColumnGrid.appendChild(devColumn1)
+
+    //alex's pic
+    const alexPic = document.createElement('img')
+    alexPic.src = "https://avatars2.githubusercontent.com/u/26612415?s=460&v=4"
+    alexPic.style = "height: 200px; float: left;"
+    devColumn1.appendChild(alexPic)
+
+    //alex's name
+    const alexName = document.createElement('h2')
+    alexName.className = "ui header"
+    alexName.innerText = "Alexandria Pugia"
+    devColumn1.appendChild(alexName)
+
+    //alex's location
+    const alexLocation = document.createElement('h4')
+    alexLocation.className = "ui header"
+    alexLocation.innerText = "Atlanta, GA"
+    devColumn1.appendChild(alexLocation)
+
+    //alex's github link
+    const alexgit = document.createElement('div')
+    devColumn1.appendChild(alexgit)
+
+    const alexGithub = document.createElement('i')
+    alexGithub.className = "github large icon"
+    alexgit.appendChild(alexGithub)
+
+    const alexGithubLink = document.createElement('a')
+    alexGithubLink.href = "https://github.com/jasminnancy"
+    alexGithubLink.innerText = "Jasminnancy"
+    alexgit.appendChild(alexGithubLink)
+
+    //creates column 2
+    const devColumn2 = document.createElement('div')
+    devColumn2.className = "column"
+    devColumnGrid.appendChild(devColumn2)
+
+    //mark's pic
+    const markPic = document.createElement('img')
+    markPic.src = "https://avatars2.githubusercontent.com/u/46269492?s=460&v=4"
+    markPic.style = "height: 200px; float: right;"
+    devColumn2.appendChild(markPic)
+
+    //mark's name
+    const markName = document.createElement('h2')
+    markName.className = "ui header"
+    markName.innerText = "Mark Harless"
+    devColumn2.appendChild(markName)
+
+    //alex's location
+    const markLocation = document.createElement('h4')
+    markLocation.className = "ui header"
+    markLocation.innerText = "Atlanta, GA"
+    devColumn2.appendChild(markLocation)
+
+    //mark's github link
+    const markgit = document.createElement('div')
+    devColumn2.appendChild(markgit)
+
+    const markGithubLink = document.createElement('a')
+    markGithubLink.href = "https://github.com/1000martians"
+    markGithubLink.innerText = "1000martians "
+    markgit.appendChild(markGithubLink)
+
+    const markGithub = document.createElement('i')
+    markGithub.className = "github large icon"
+    markgit.appendChild(markGithub)
+
+    //creates "and" in the middle
+    const devAnd = document.createElement('div')
+    devAnd.className = "ui vertical divider"
+    devAnd.innerText = "AND"
+    devDiv.appendChild(devAnd)
 }
 
 ////////// CLEAR NODE //////////
