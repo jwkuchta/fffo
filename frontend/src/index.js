@@ -109,28 +109,29 @@ function gameScoreUpdateFetch() {
 ////////// GAME //////////
 
 function renderPlayGame() {
+    const playButton = document.createElement("button")
+    playButton.className = "massive ui button"
+    playButton.style = "width: 250px; margin: 100px; background-color: #c93939; color: #f0f0f0;"
+    playButton.innerText = "Play Now"
+    pageBody.appendChild(playButton)
+
     const rulesDiv = document.createElement("div")
     rulesDiv.className = "ui"
     pageBody.appendChild(rulesDiv);
+
     const rulesA = document.createElement("p")
     rulesA.innerHTML = "The object of this game is to guess which of the two food items has the most calories. <br> After every correct answer, two more food items appear.<br>This will go on until you select the incorrect answer in which the game is over."
     rulesDiv.appendChild(rulesA)
 
-  const playButton = document.createElement("button")
-  playButton.className = "massive ui button"
-  playButton.style = "width: 250px; margin: 100px; background-color: #c93939; color: #f0f0f0;"
-  playButton.innerText = "Play Now"
-  pageBody.appendChild(playButton)
+    const wellWishes = document.createElement('h3')
+    wellWishes.className = "ui header"
+    wellWishes.innerText = "Good Luck!"
+    pageBody.appendChild(wellWishes)
 
-  const wellWishes = document.createElement('h3')
-  wellWishes.className = "ui header"
-  wellWishes.innerText = "Good Luck!"
-  pageBody.appendChild(wellWishes)
-
-  playButton.addEventListener("click", () => {
-    clearNode(pageBody)
-    renderUserInfo()
-  })
+    playButton.addEventListener("click", () => {
+        clearNode(pageBody)
+        renderUserInfo()
+    })
 }
 
 function renderUserInfo() {

@@ -2,7 +2,10 @@ class GamesController < ApplicationController
     def index
         games = Game.all
 
-        render json: games
+        render :json => games.to_json({ :except => [:created_at, :updated_at],
+                                        :include => [
+                                        :user => { :only => [:username]}
+                                    ]}) 
     end
 
     def create
